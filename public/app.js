@@ -54,13 +54,13 @@ async function initPose() {
   // 動態載入 MediaPipe（CDN 失敗只會影響呢度，唔會拖垮成個程式）
   if (!PoseLandmarker) {
     const mod = await import(
-      "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.22"
+      "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.35/vision_bundle.mjs"
     );
     PoseLandmarker = mod.PoseLandmarker;
     FilesetResolver = mod.FilesetResolver;
   }
   const vision = await FilesetResolver.forVisionTasks(
-    "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.22/wasm"
+    "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.35/wasm"
   );
   const opts = (delegate) => ({
     baseOptions: {
