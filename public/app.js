@@ -1,9 +1,9 @@
 // FitPlay AI — 前端主程式
 // 用 MediaPipe Pose 偵測動作，玩 3 個挑戰，計分後叫 Qwen 生成報告。
-import {
-  PoseLandmarker,
-  FilesetResolver,
-} from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.22";
+//
+// 注意：MediaPipe 唔再喺頂層 import，而係喺 initPose() 用「動態 import」載入。
+// 咁樣即使 CDN 被網絡擋住，呢個程式仍會完整載入，鏡頭同所有按鈕照樣運作。
+let PoseLandmarker, FilesetResolver;
 
 // ---------- 全域狀態 ----------
 const state = {
@@ -51,6 +51,14 @@ let lastVideoTime = -1;
 let rafId = null;
 
 async function initPose() {
+  // 動態載入 MediaPipe（CDN 失敗只會影響呢度，唔會拖垮成個程式）
+  if (!PoseLandmarker) {
+    const mod = await import(
+      "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.22"
+    );
+    PoseLandmarker = mod.PoseLandmarker;
+    FilesetResolver = mod.FilesetResolver;
+  }
   const vision = await FilesetResolver.forVisionTasks(
     "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.22/wasm"
   );
