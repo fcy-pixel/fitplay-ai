@@ -95,7 +95,8 @@ function buildPrompt({ profile, results, scores, previous }) {
   lines.push(`- 性別：${profile.gender || "未知"}`);
   lines.push(`- 身高：${profile.height || "未知"} cm`);
   lines.push(`- 體重：${profile.weight || "未知"} kg`);
-  if (scores.bmi) lines.push(`- BMI：${scores.bmi}`);
+  if (scores.bmi) lines.push(`- BMI：${scores.bmi}（分類：${scores.bmiBand || "未評"}）`);
+  if (scores.band) lines.push(`- 年齡組別：${scores.band}（評分已對照此組別常模）`);
   lines.push("");
   lines.push("【原始測試成績】");
   lines.push(`- 開合跳（30 秒）：${results.jumpingJacks ?? 0} 下`);

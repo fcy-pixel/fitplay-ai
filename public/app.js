@@ -281,28 +281,86 @@ function finishChallenge() {
   }
 }
 
-// ---------- 計分（0–100，門檻可按官方常模調整）----------
+// ---------- 體適能參考常模（可校準）----------
+// 設計參考「香港學校體適能獎勵計劃」分齡分性別嘅理念：
+//   good  = 達標（≈ 同齡第50百分位，給 80 分）
+//   exc   = 優異（≈ 同齡第85百分位，給 100 分）
+// 註：本計劃官方測試為 1 分鐘仰臥起坐 / 坐位體前彎 / 9 分鐘跑等，
+//     與本 app 嘅動作（30 秒開合跳/深蹲、單腳平衡）唔完全對應，
+//     以下數值為按生理發展推算嘅教育用參考值，老師可用全班實測中位數校準。
+const NORMS = {
+  // 年齡分組：'6-9' | '10-12' | '13-15' | '16+'
+  // 每格 [達標(good), 優異(exc)]
+  jumpingJacks: { // 30 秒下數
+    male:   { "6-9": [22, 32], "10-12": [28, 40], "13-15": [32, 44], "16+": [34, 46] },
+    female: { "6-9": [20, 30], "10-12": [26, 38], "13-15": [30, 42], "16+": [32, 44] },
+  },
+  squats: { // 30 秒下數
+    male:   { "6-9": [16, 24], "10-12": [20, 30], "13-15": [24, 34], "16+": [26, 38] },
+    female: { "6-9": [15, 22], "10-12": [18, 28], "13-15": [22, 32], "16+": [24, 34] },
+  },
+  balance: { // 單腳站立秒數
+    male:   { "6-9": [12, 22], "10-12": [18, 28], "13-15": [22, 32], "16+": [24, 34] },
+    female: { "6-9": [14, 24], "10-12": [20, 30], "13-15": [24, 34], "16+": [26, 36] },
+  },
+};
+
+// 兒童 BMI-for-age 健康區間（參考 WHO/衞生署理念，教育用簡化值）
+// 每格 [健康下限, 健康上限]
+const BMI_HEALTHY = {
+  male:   { "6-9": [14.0, 18.5], "10-12": [14.5, 20.5], "13-15": [16.0, 22.5], "16+": [17.5, 24.0] },
+  female: { "6-9": [13.8, 18.8], "10-12": [14.5, 21.0], "13-15": [16.5, 23.0], "16+": [17.5, 24.0] },
+};
+
+function ageBand(age) {
+  const a = parseInt(age, 10) || 12;
+  if (a <= 9) return "6-9";
+  if (a <= 12) return "10-12";
+  if (a <= 15) return "13-15";
+  return "16+";
+}
+function genderKey(g) {
+  return g === "女" ? "female" : "male"; // 「其他」暫用男性常模
+}
+
+// 將實測值對照常模轉成 0–100 分
+// 0 ~ good → 0–80 分；good ~ exc → 80–100 分；≥ exc → 100 分
+function scoreVsNorm(value, [good, exc]) {
+  if (value <= 0) return 0;
+  if (value >= exc) return 100;
+  if (value >= good) return Math.round(80 + ((value - good) / (exc - good)) * 20);
+  return Math.round((value / good) * 80);
+}
+
+// ---------- 計分（已按分齡/分性別常模校準）----------
 function computeScores() {
   const r = state.results;
   const clamp = (n) => Math.max(0, Math.min(100, Math.round(n)));
+  const band = ageBand(state.profile.age);
+  const g = genderKey(state.profile.gender);
 
-  const cardio = clamp((r.jumpingJacks / 40) * 100); // 30秒40下 ≈ 滿分
-  const legStrength = clamp((r.squats / 25) * 100); // 30秒25下 ≈ 滿分
-  const balance = clamp((r.balanceSec / 30) * 100); // 維持30秒 ≈ 滿分
-  const core = clamp((balance + legStrength) / 2); // 核心穩定（估算）
+  const cardio = scoreVsNorm(r.jumpingJacks, NORMS.jumpingJacks[g][band]);
+  const legStrength = scoreVsNorm(r.squats, NORMS.squats[g][band]);
+  const balance = scoreVsNorm(r.balanceSec, NORMS.balance[g][band]);
+  const core = clamp((balance + legStrength) / 2); // 核心穩定（由平衡+下肢推算）
 
-  // BMI
+  // BMI（分齡/分性別健康區間）
   const h = parseFloat(state.profile.height) / 100;
   const w = parseFloat(state.profile.weight);
-  let bmi = null, bmiScore = 70;
+  let bmi = null, bmiScore = 70, bmiBand = "未知";
   if (h > 0 && w > 0) {
     bmi = Math.round((w / (h * h)) * 10) / 10;
-    // 18.5–23 視為理想；偏離愈遠分愈低（教育用簡化模型）
-    const ideal = 20.75;
-    bmiScore = clamp(100 - Math.abs(bmi - ideal) * 7);
+    const [lo, hi] = BMI_HEALTHY[g][band];
+    if (bmi >= lo && bmi <= hi) {
+      bmiScore = 100; bmiBand = "健康";
+    } else if (bmi < lo) {
+      bmiScore = clamp(100 - (lo - bmi) * 12); bmiBand = "偏輕";
+    } else {
+      bmiScore = clamp(100 - (bmi - hi) * 12); bmiBand = bmi > hi + 3 ? "肥胖" : "超重";
+    }
   }
 
-  state.scores = { cardio, legStrength, balance, core, bmi, bmiScore };
+  state.scores = { cardio, legStrength, balance, core, bmi, bmiScore, bmiBand, band, gender: g };
 }
 
 // ---------- 報告 ----------
@@ -339,7 +397,7 @@ function drawRadar() {
     },
   });
   const s2 = state.scores;
-  $("bmi-badge").textContent = s2.bmi ? `BMI：${s2.bmi}` : "未填身高體重";
+  $("bmi-badge").textContent = s2.bmi ? `BMI：${s2.bmi}（${s2.bmiBand}）` : "未填身高體重";
 }
 
 async function fetchAIReport() {
