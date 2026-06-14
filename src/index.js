@@ -60,9 +60,10 @@ async function handleAnalyze(request, env) {
           {
             role: "system",
             content:
-              "你是一位專業嘅運動科學顧問同註冊體適能教練，服務對象係中小學生。" +
-              "你會根據學生嘅體適能測試數據，用繁體中文（香港用語）撰寫一份溫暖、正面、" +
-              "鼓勵性但專業嘅分析報告。語氣要適合學生睇得明，避免醫療診斷，著重健康同進步。",
+              "你是一位專業的運動科學顧問及註冊體適能教練，服務對象為中小學生。" +
+              "你會根據學生的體適能測試數據，以繁體中文（標準書面語，切勿使用粵語口語或網絡用語）" +
+              "撰寫一份溫暖、正面、具鼓勵性而專業的分析報告。用詞需正式得體、條理清晰、適合學生理解；" +
+              "避免醫療診斷，著重健康與進步。",
           },
           { role: "user", content: prompt },
         ],
@@ -87,7 +88,8 @@ async function handleAnalyze(request, env) {
 
 function buildPrompt({ profile, results, scores, previous }) {
   const lines = [];
-  lines.push("以下係一位學生啱啱完成嘅 AI 體適能小遊戲測試數據，請你生成一份個人化分析報告。");
+  lines.push("以下是一位學生剛完成的 AI 體適能小遊戲測試數據，請生成一份個人化分析報告。");
+  lines.push("（重要：全文必須使用繁體中文標準書面語，切勿使用粵語口語或網絡用語。）");
   lines.push("");
   lines.push("【學生資料】");
   lines.push(`- 暱稱：${profile.name || "同學"}`);
@@ -115,11 +117,11 @@ function buildPrompt({ profile, results, scores, previous }) {
     lines.push(`- 上次心肺耐力：${previous.cardio ?? "-"}，下肢肌力：${previous.legStrength ?? "-"}，平衡力：${previous.balance ?? "-"}`);
   }
   lines.push("");
-  lines.push("請按以下結構輸出（用 Markdown，加 emoji 標題，總字數約 350–500 字）：");
-  lines.push("## 🌟 總體評語（2–3 句鼓勵性總結）");
-  lines.push("## 💪 強項（指出 1–2 個表現最好嘅項目並讚賞）");
-  lines.push("## 🎯 可改善之處（指出最弱項目，溫和地解釋對健康嘅影響）");
-  lines.push("## 🏃 個人化訓練建議（俾 3 個具體、可喺屋企做、附次數/時間嘅練習）");
+  lines.push("請按以下結構輸出（使用 Markdown，加 emoji 標題，總字數約 350–500 字，全文書面語）：");
+  lines.push("## 🌟 總體評語（2–3 句具鼓勵性的總結）");
+  lines.push("## 💪 強項（指出 1–2 個表現最佳的項目並加以肯定）");
+  lines.push("## 🎯 可改善之處（指出最弱項目，溫和地說明其對健康的影響）");
+  lines.push("## 🏃 個人化訓練建議（提供 3 項具體、可在家進行、附次數或時間的練習）");
   lines.push("## ⚠️ 安全小提示（1–2 句）");
 
   return lines.join("\n");

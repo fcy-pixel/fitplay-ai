@@ -31,6 +31,9 @@
   .poster>*{position:relative;z-index:1;}
 
   /* 標題 */
+  .school-bar{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:14px;}
+  .school-bar img{height:64px;width:auto;background:#fff;border-radius:14px;padding:5px;box-shadow:0 5px 0 rgba(0,0,0,.1);}
+  .school-bar span{background:#fff;color:var(--ink);font-weight:900;font-size:1.25rem;padding:9px 20px;border-radius:999px;box-shadow:0 5px 0 rgba(0,0,0,.1);}
   .title{font-family:var(--display);font-size:4.6rem;font-weight:700;text-align:center;color:#fff;line-height:1;
     text-shadow:0 5px 0 #ffb454,0 8px 16px rgba(0,0,0,.2);}
   .title b{color:var(--sun);}
@@ -109,6 +112,10 @@
   <span class="blob bA"></span><span class="blob bB"></span>
   <span class="blob bC"></span><span class="blob bD"></span>
 
+  <div class="school-bar">
+    <img src="/school-logo.png" alt="中華基督教會基慈小學校徽" onerror="this.style.display='none'" />
+    <span>中華基督教會基慈小學</span>
+  </div>
   <div class="title">🏃 FitPlay <b>AI</b> 🎮</div>
   <span class="slogan">邊玩邊測，AI 做你嘅體適能教練！</span>
   <div class="sub">STEAM in PE · AI 程式設計作品 · 用鏡頭 + 人工智能</div>
@@ -178,6 +185,7 @@
       <div class="url-t">fitplay-ai.fcy.workers.dev</div>
       <div class="url-s">用手機 / 電腦開，俾鏡頭權限就玩得！</div>
       <div class="tag">⚙️ MediaPipe Pose × Qwen AI × Cloudflare ｜ STEAM in PE</div>
+      <div class="tag">🏫 中華基督教會基慈小學 CCC Kei Tsz School</div>
     </div>
   </div>
 </div>

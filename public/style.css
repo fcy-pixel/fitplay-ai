@@ -37,6 +37,9 @@ body {
 
 /* 標題 */
 header { text-align: center; margin-bottom: 18px; }
+.school { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px; }
+.school-logo { height: 46px; width: auto; background: #fff; border-radius: 12px; padding: 4px; box-shadow: 0 4px 0 rgba(0,0,0,.1); }
+.school-name { background: #fff; color: var(--ink); font-weight: 700; font-size: 1.05rem; padding: 7px 16px; border-radius: 999px; box-shadow: 0 4px 0 rgba(0,0,0,.08); }
 header h1 {
   font-family: var(--display); font-size: 3rem; margin: 0; color: #fff;
   text-shadow: 0 4px 0 #ffb454, 0 6px 12px rgba(0,0,0,.18); letter-spacing: 1px;
