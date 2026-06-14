@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FitPlay AI — 海報</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --sun:#ffd43b; --coral:#ff6b6b; --mint:#51e5a8; --grape:#9775fa; --blue:#4dabf7;
+    --ink:#2b2d52; --ink-soft:#6b6f9c;
+    --display:"Fredoka","Noto Sans TC",system-ui,sans-serif;
+    --body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--body);color:var(--ink);background:#cdeeff;display:flex;justify-content:center;padding:24px;}
+
+  .poster{
+    position:relative; width:820px; background:linear-gradient(180deg,#8ad8ff 0%,#bdeeff 38%,#eafbff 100%);
+    border-radius:36px; overflow:hidden; box-shadow:0 24px 60px rgba(40,80,140,.35);
+    padding:40px 44px 36px;
+  }
+  /* 背景泡泡 */
+  .blob{position:absolute;border-radius:50%;opacity:.45;filter:blur(1px);z-index:0;}
+  .bA{width:180px;height:180px;background:var(--sun);top:-40px;left:-30px;}
+  .bB{width:120px;height:120px;background:var(--coral);top:30%;right:-30px;}
+  .bC{width:150px;height:150px;background:var(--mint);bottom:6%;left:-40px;}
+  .bD{width:90px;height:90px;background:var(--grape);bottom:24%;right:8%;}
+  .poster>*{position:relative;z-index:1;}
+
+  /* 標題 */
+  .title{font-family:var(--display);font-size:4.6rem;font-weight:700;text-align:center;color:#fff;line-height:1;
+    text-shadow:0 5px 0 #ffb454,0 8px 16px rgba(0,0,0,.2);}
+  .title b{color:var(--sun);}
+  .slogan{display:block;text-align:center;margin:16px auto 4px;background:#fff;color:var(--ink);
+    font-weight:900;font-size:1.5rem;padding:12px 26px;border-radius:999px;width:fit-content;
+    box-shadow:0 5px 0 rgba(0,0,0,.1);}
+  .sub{text-align:center;color:var(--grape);font-weight:700;font-size:1.05rem;margin-bottom:26px;}
+
+  /* 區塊標題 */
+  .h{font-family:var(--display);font-weight:700;font-size:1.7rem;color:var(--ink);margin:24px 0 14px;
+    display:flex;align-items:center;gap:10px;}
+  .h::before{content:"";width:14px;height:28px;border-radius:8px;background:var(--coral);}
+
+  /* 卡片格 */
+  .row{display:grid;gap:16px;}
+  .c3{grid-template-columns:repeat(3,1fr);}
+  .c2{grid-template-columns:repeat(2,1fr);}
+  .tile{background:#fff;border-radius:24px;padding:20px 18px;text-align:center;
+    box-shadow:0 7px 0 rgba(120,150,200,.18);border:3px solid #fff;}
+  .tile .ic{font-size:3rem;line-height:1;}
+  .tile .t{font-family:var(--display);font-weight:700;font-size:1.35rem;margin:8px 0 4px;}
+  .tile .d{color:var(--ink-soft);font-weight:700;font-size:1rem;}
+  .step .num{font-family:var(--display);display:inline-block;background:var(--sun);color:var(--ink);
+    width:42px;height:42px;line-height:42px;border-radius:50%;font-size:1.5rem;font-weight:700;box-shadow:0 4px 0 #e0ab00;}
+
+  .pill{display:inline-block;background:var(--mint);color:#0c4a32;font-weight:700;font-size:.95rem;
+    padding:4px 12px;border-radius:999px;margin-top:8px;}
+  .pill.blue{background:#cfe7ff;color:#0c447c;}
+  .pill.grape{background:#e6ddff;color:#3c2a78;}
+
+  /* AI 功能 */
+  .feat{background:#fff;border-radius:24px;padding:22px;display:flex;gap:16px;align-items:flex-start;
+    box-shadow:0 7px 0 rgba(120,150,200,.18);}
+  .feat .ic{font-size:2.6rem;line-height:1;}
+  .feat .t{font-family:var(--display);font-weight:700;font-size:1.3rem;margin-bottom:4px;}
+  .feat .d{color:var(--ink-soft);font-weight:700;font-size:1rem;line-height:1.5;}
+
+  /* 五大體適能 + 雷達 */
+  .radar-wrap{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:center;
+    background:#fff;border-radius:24px;padding:20px;box-shadow:0 7px 0 rgba(120,150,200,.18);}
+  .dims{display:flex;flex-direction:column;gap:10px;}
+  .dim{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.1rem;}
+  .dim .dot{width:16px;height:16px;border-radius:50%;}
+
+  /* 特點 badges */
+  .badges{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:6px;}
+  .badge{background:#fff;border-radius:16px;padding:12px 18px;font-weight:700;font-size:1.05rem;
+    box-shadow:0 5px 0 rgba(120,150,200,.18);}
+
+  /* 頁尾 QR */
+  .foot{margin-top:26px;background:var(--ink);border-radius:24px;padding:22px 26px;color:#fff;
+    display:flex;align-items:center;gap:22px;}
+  .foot .qr{background:#fff;border-radius:16px;padding:10px;flex-shrink:0;}
+  .foot .qr img{display:block;width:120px;height:120px;}
+  .foot .url-t{font-family:var(--display);font-weight:700;font-size:1.5rem;color:var(--sun);word-break:break-all;}
+  .foot .url-s{font-weight:700;font-size:1rem;opacity:.9;margin-top:6px;}
+  .foot .tag{margin-top:10px;font-size:.95rem;opacity:.8;}
+
+  .print-btn{position:fixed;top:18px;right:18px;z-index:99;font-family:var(--display);font-weight:700;
+    background:var(--coral);color:#fff;border:none;border-radius:16px;padding:12px 18px;font-size:1.1rem;
+    cursor:pointer;box-shadow:0 5px 0 #d84a4a;}
+  .print-btn:active{transform:translateY(4px);box-shadow:0 1px 0 #d84a4a;}
+
+  @media print{
+    @page{size:A3 portrait;margin:0;}
+    body{background:#fff;padding:0;}
+    .poster{box-shadow:none;border-radius:0;width:100%;}
+    .print-btn{display:none;}
+  }
+</style>
+</head>
+<body>
+<button class="print-btn" onclick="window.print()">🖨️ 列印 / 存 PDF</button>
+
+<div class="poster">
+  <span class="blob bA"></span><span class="blob bB"></span>
+  <span class="blob bC"></span><span class="blob bD"></span>
+
+  <div class="title">🏃 FitPlay <b>AI</b> 🎮</div>
+  <span class="slogan">邊玩邊測，AI 做你嘅體適能教練！</span>
+  <div class="sub">STEAM in PE · AI 程式設計作品 · 用鏡頭 + 人工智能</div>
+
+  <!-- 玩法 3 步 -->
+  <div class="h">🎯 三步就玩到</div>
+  <div class="row c3">
+    <div class="tile step"><div class="num">1</div><div class="t">📷 開鏡頭</div><div class="d">企喺鏡頭前，免安裝</div></div>
+    <div class="tile step"><div class="num">2</div><div class="t">🎮 玩小遊戲</div><div class="d">跟住做動作挑戰</div></div>
+    <div class="tile step"><div class="num">3</div><div class="t">📊 睇報告</div><div class="d">AI 即時分析俾你</div></div>
+  </div>
+
+  <!-- 3 個小遊戲 -->
+  <div class="h">🕹️ 三個體感小遊戲</div>
+  <div class="row c3">
+    <div class="tile"><div class="ic">🌟</div><div class="t">開合跳</div><div class="d">30 秒挑戰</div><span class="pill">心肺耐力</span></div>
+    <div class="tile"><div class="ic">⚡</div><div class="t">深蹲</div><div class="d">30 秒挑戰</div><span class="pill blue">下肢肌力</span></div>
+    <div class="tile"><div class="ic">🧘</div><div class="t">單腳平衡</div><div class="d">企得越耐越勁</div><span class="pill grape">平衡力</span></div>
+  </div>
+
+  <!-- AI 功能 -->
+  <div class="h">🤖 AI 點樣幫到你</div>
+  <div class="row c2">
+    <div class="feat"><div class="ic">👁️</div><div><div class="t">AI 動作偵測</div>
+      <div class="d">MediaPipe 即時追蹤身體 33 個關節，自動數次數、判斷姿勢準唔準。</div></div></div>
+    <div class="feat"><div class="ic">📝</div><div><div class="t">AI 個人化報告</div>
+      <div class="d">Qwen 大型語言模型，為你寫出專屬嘅運動建議同鼓勵。</div></div></div>
+  </div>
+
+  <!-- 五大體適能 -->
+  <div class="h">📈 五大體適能評分</div>
+  <div class="radar-wrap">
+    <svg viewBox="0 0 200 200" width="100%" style="max-width:220px;margin:auto;display:block;">
+      <polygon points="100,20 168,68 142,158 58,158 32,68" fill="none" stroke="#d6e6f2" stroke-width="2"/>
+      <polygon points="100,50 142,79 126,134 74,134 58,79" fill="none" stroke="#e2eef8" stroke-width="2"/>
+      <polygon points="100,32 156,72 132,150 64,150 44,72" fill="rgba(151,117,250,.28)" stroke="#9775fa" stroke-width="3"/>
+      <circle cx="100" cy="32" r="5" fill="#ff6b6b"/><circle cx="156" cy="72" r="5" fill="#ff6b6b"/>
+      <circle cx="132" cy="150" r="5" fill="#ff6b6b"/><circle cx="64" cy="150" r="5" fill="#ff6b6b"/>
+      <circle cx="44" cy="72" r="5" fill="#ff6b6b"/>
+    </svg>
+    <div class="dims">
+      <div class="dim"><span class="dot" style="background:#ff6b6b"></span>❤️ 心肺耐力</div>
+      <div class="dim"><span class="dot" style="background:#4dabf7"></span>💪 下肢肌力</div>
+      <div class="dim"><span class="dot" style="background:#51e5a8"></span>🤸 平衡力</div>
+      <div class="dim"><span class="dot" style="background:#ffd43b"></span>🧱 核心穩定</div>
+      <div class="dim"><span class="dot" style="background:#9775fa"></span>⚖️ 身體質量 BMI</div>
+    </div>
+  </div>
+
+  <!-- 特點 -->
+  <div class="h">✨ 點解咁正</div>
+  <div class="badges">
+    <span class="badge">🚫 零安裝</span>
+    <span class="badge">🔒 私隱友善</span>
+    <span class="badge">📐 分齡常模</span>
+    <span class="badge">⚡ 即玩即出報告</span>
+    <span class="badge">📱 手機電腦都用得</span>
+  </div>
+
+  <!-- 頁尾 -->
+  <div class="foot">
+    <div class="qr">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 31 31" width="120" height="120" shape-rendering="crispEdges" role="img" aria-label="FitPlay AI QR code"><path fill="#ffffff" d="M0 0h31v31H0z"/><path stroke="#000000" d="M1 1.5h7m2 0h1m3 0h3m1 0h3m2 0h7M1 2.5h1m5 0h1m3 0h2m1 0h5m2 0h1m1 0h1m5 0h1M1 3.5h1m1 0h3m1 0h1m1 0h2m3 0h1m1 0h1m2 0h1m3 0h1m1 0h3m1 0h1M1 4.5h1m1 0h3m1 0h1m1 0h1m3 0h1m1 0h2m1 0h1m1 0h2m1 0h1m1 0h3m1 0h1M1 5.5h1m1 0h3m1 0h1m1 0h3m1 0h1m2 0h2m2 0h2m1 0h1m1 0h3m1 0h1M1 6.5h1m5 0h1m1 0h1m3 0h1m4 0h1m2 0h1m1 0h1m5 0h1M1 7.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M9 8.5h1m1 0h3m1 0h1m1 0h1m2 0h1M1 9.5h1m1 0h5m5 0h1m4 0h1m4 0h5M2 10.5h3m3 0h2m4 0h3m1 0h8m3 0h1M1 11.5h1m1 0h1m1 0h12m1 0h1m4 0h1m1 0h1M2 12.5h1m2 0h2m1 0h1m1 0h1m1 0h3m2 0h1m2 0h3m2 0h2m1 0h1M1 13.5h2m1 0h4m3 0h2m2 0h4m5 0h1m1 0h2M2 14.5h1m2 0h2m2 0h2m1 0h2m3 0h1m2 0h6m3 0h1M1 15.5h2m4 0h2m2 0h3m2 0h4m2 0h1m2 0h3M1 16.5h1m1 0h1m2 0h1m1 0h1m2 0h2m2 0h3m1 0h3m2 0h2m2 0h1M1 17.5h1m1 0h1m3 0h2m1 0h2m4 0h1m1 0h1m1 0h1m3 0h1m1 0h2M1 18.5h3m1 0h1m2 0h1m1 0h1m1 0h4m1 0h4m2 0h3m1 0h1m1 0h1M1 19.5h1m2 0h2m1 0h1m2 0h1m1 0h5m1 0h2m1 0h5m1 0h1M1 20.5h1m7 0h3m1 0h2m1 0h2m10 0h1M1 21.5h1m1 0h2m1 0h2m1 0h1m5 0h2m1 0h1m1 0h6m1 0h3M9 22.5h1m3 0h1m3 0h1m1 0h1m1 0h1m3 0h5M1 23.5h7m4 0h2m2 0h1m3 0h2m1 0h1m1 0h3M1 24.5h1m5 0h1m1 0h3m1 0h1m1 0h1m1 0h1m2 0h2m3 0h1m2 0h2M1 25.5h1m1 0h3m1 0h1m1 0h2m1 0h2m4 0h1m2 0h5m1 0h2M1 26.5h1m1 0h3m1 0h1m1 0h3m2 0h2m4 0h1m1 0h1m3 0h4M1 27.5h1m1 0h3m1 0h1m1 0h3m1 0h1m1 0h5m2 0h7M1 28.5h1m5 0h1m5 0h2m4 0h1m1 0h1m1 0h1m2 0h1m1 0h1M1 29.5h7m1 0h2m1 0h1m2 0h4m1 0h1m3 0h2m1 0h1"/></svg>
+    </div>
+    <div>
+      <div style="font-weight:700;font-size:1.1rem;margin-bottom:4px;">📲 即刻掃描試玩：</div>
+      <div class="url-t">fitplay-ai.fcy.workers.dev</div>
+      <div class="url-s">用手機 / 電腦開，俾鏡頭權限就玩得！</div>
+      <div class="tag">⚙️ MediaPipe Pose × Qwen AI × Cloudflare ｜ STEAM in PE</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

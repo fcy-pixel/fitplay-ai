@@ -9,6 +9,7 @@
     "deploy": "wrangler deploy --config ./wrangler.toml"
   },
   "devDependencies": {
+    "qrcode": "^1.5.4",
     "wrangler": "^3.90.0"
   }
 }
