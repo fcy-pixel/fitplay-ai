@@ -54,28 +54,50 @@ async function initPose() {
   const vision = await FilesetResolver.forVisionTasks(
     "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.22/wasm"
   );
-  poseLandmarker = await PoseLandmarker.createFromOptions(vision, {
+  const opts = (delegate) => ({
     baseOptions: {
       modelAssetPath:
         "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task",
-      delegate: "GPU",
+      delegate,
     },
     runningMode: "VIDEO",
     numPoses: 1,
   });
+  try {
+    poseLandmarker = await PoseLandmarker.createFromOptions(vision, opts("GPU"));
+  } catch (e) {
+    // 部分裝置 / 瀏覽器無 WebGL，改用 CPU 後備
+    poseLandmarker = await PoseLandmarker.createFromOptions(vision, opts("CPU"));
+  }
 }
 
 // ---------- 鏡頭 ----------
 async function enableCamera() {
-  const stream = await navigator.mediaDevices.getUserMedia({
-    video: { width: 640, height: 480 },
-    audio: false,
-  });
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    throw new Error("呢個瀏覽器唔支援鏡頭（需要 https 或較新版本 Chrome/Safari）");
+  }
+  let stream;
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: "user", width: { ideal: 640 }, height: { ideal: 480 } },
+      audio: false,
+    });
+  } catch (err) {
+    // 將瀏覽器錯誤碼轉成人話
+    const map = {
+      NotAllowedError: "鏡頭權限被拒絕。請喺網址列左邊嘅鎖頭🔒 → 允許「相機」，再重新整理。",
+      NotFoundError: "搵唔到鏡頭。請確認裝置有鏡頭並無被其他程式佔用。",
+      NotReadableError: "鏡頭被其他程式（Zoom／Teams／另一個分頁）佔用，請先關閉佢哋。",
+      OverconstrainedError: "鏡頭唔支援要求嘅設定，請換另一部裝置試。",
+      SecurityError: "因安全限制無法開啟鏡頭，請用 https 網址開啟。",
+    };
+    throw new Error(map[err.name] || `${err.name}：${err.message}`);
+  }
   video.srcObject = stream;
   await new Promise((res) => (video.onloadedmetadata = res));
   await video.play();
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
+  canvas.width = video.videoWidth || 640;
+  canvas.height = video.videoHeight || 480;
 }
 
 // ---------- 偵測迴圈 ----------
@@ -449,18 +471,34 @@ $("btn-enable-cam").addEventListener("click", async () => {
   };
   const btn = $("btn-enable-cam");
   btn.disabled = true;
-  $("cam-status").textContent = "載入 AI 模型中…（第一次會耐少少）";
+
+  // 1) 先開鏡頭（即刻彈權限視窗，唔使等模型）
+  $("cam-status").textContent = "開啟鏡頭中…請喺彈出視窗按「允許」";
   try {
-    await initPose();
-    $("cam-status").textContent = "開啟鏡頭中…";
     await enableCamera();
-    loop();
-    state.currentChallenge = 0;
-    showScreen("screen-game");
-    prepareChallenge();
   } catch (e) {
     btn.disabled = false;
-    $("cam-status").textContent = "❌ 失敗：" + e.message + "（請確認已允許鏡頭權限）";
+    $("cam-status").textContent = "❌ " + e.message;
+    return;
+  }
+
+  // 2) 入到遊戲畫面，鏡頭已經睇到自己
+  loop();
+  state.currentChallenge = 0;
+  showScreen("screen-game");
+  prepareChallenge();
+
+  // 3) 背景載入 AI 模型；未載好之前唔俾撳「開始挑戰」
+  const startBtn = $("btn-start-challenge");
+  startBtn.disabled = true;
+  $("game-instruction").textContent = "🤖 AI 模型載入中…（第一次會耐少少）";
+  try {
+    await initPose();
+    $("game-instruction").textContent = CHALLENGES[state.currentChallenge].instruction;
+    startBtn.disabled = false;
+  } catch (e) {
+    $("game-instruction").textContent = "❌ AI 模型載入失敗：" + e.message +
+      "。可能係網絡擋咗 CDN，請換網絡或稍後再試。";
   }
 });
 
