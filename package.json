@@ -1,0 +1,14 @@
+{
+  "name": "fitplay-ai",
+  "version": "1.0.0",
+  "description": "STEAM in PE — 用 AI 邊玩邊做體適能測試，生成個人化分析報告",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^3.90.0"
+  }
+}

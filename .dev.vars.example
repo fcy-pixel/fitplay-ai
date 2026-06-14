@@ -1,0 +1,4 @@
+# 複製呢個檔案做 .dev.vars（已被 .gitignore 排除，唔會上 GitHub），
+# 然後填入你嘅 Qwen 國際版 API key 用嚟本機測試。
+QWEN_API_KEY=sk-你的key
+QWEN_MODEL=qwen-plus

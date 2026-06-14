@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FitPlay AI — 邊玩邊測體適能</title>
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+</head>
+<body>
+  <div id="app">
+    <!-- 標題 -->
+    <header>
+      <h1>🏃 FitPlay <span>AI</span></h1>
+      <p class="tagline">玩 3 個小遊戲，AI 幫你做專業體適能分析</p>
+    </header>
+
+    <!-- 畫面 1：輸入資料 -->
+    <section id="screen-intro" class="screen active">
+      <div class="card">
+        <h2>📋 開始之前</h2>
+        <p class="hint">填好資料，等 AI 報告更準確。資料只存喺你部機，唔會上傳。</p>
+        <div class="form-grid">
+          <label>暱稱<input id="in-name" type="text" placeholder="同學" /></label>
+          <label>年齡<input id="in-age" type="number" min="6" max="20" placeholder="12" /></label>
+          <label>性別
+            <select id="in-gender">
+              <option value="男">男</option>
+              <option value="女">女</option>
+              <option value="其他">其他</option>
+            </select>
+          </label>
+          <label>身高 (cm)<input id="in-height" type="number" min="80" max="220" placeholder="150" /></label>
+          <label>體重 (kg)<input id="in-weight" type="number" min="15" max="150" placeholder="45" /></label>
+        </div>
+        <button id="btn-enable-cam" class="btn-primary">📷 開啟鏡頭並開始</button>
+        <p id="cam-status" class="status"></p>
+      </div>
+    </section>
+
+    <!-- 畫面 2：遊戲 -->
+    <section id="screen-game" class="screen">
+      <div class="game-stage">
+        <video id="webcam" autoplay playsinline muted></video>
+        <canvas id="overlay"></canvas>
+        <div class="hud">
+          <div class="hud-top">
+            <span id="game-title">準備中…</span>
+            <span id="game-timer">--</span>
+          </div>
+          <div class="hud-count"><span id="game-count">0</span><small id="game-unit"></small></div>
+          <div id="game-instruction" class="instruction"></div>
+        </div>
+      </div>
+      <div class="game-controls">
+        <button id="btn-start-challenge" class="btn-primary">開始呢個挑戰</button>
+        <div id="progress-dots" class="dots"></div>
+      </div>
+    </section>
+
+    <!-- 畫面 3：報告 -->
+    <section id="screen-report" class="screen">
+      <div class="card">
+        <h2>📊 <span id="report-name">你</span>嘅體適能報告</h2>
+        <div class="report-grid">
+          <div class="chart-box">
+            <canvas id="radar"></canvas>
+            <div id="bmi-badge" class="bmi-badge"></div>
+          </div>
+          <div class="ai-box">
+            <div id="ai-loading" class="ai-loading">
+              <div class="spinner"></div>
+              <p>AI 教練分析緊你嘅數據…</p>
+            </div>
+            <article id="ai-report" class="ai-report"></article>
+          </div>
+        </div>
+        <div class="report-actions">
+          <button id="btn-restart" class="btn-secondary">🔄 再玩一次</button>
+          <button id="btn-print" class="btn-secondary">🖨️ 列印 / 存 PDF</button>
+        </div>
+      </div>
+    </section>
+
+    <footer>STEAM in PE · MediaPipe Pose × Qwen AI · 數據僅供教育參考，非醫療診斷</footer>
+  </div>
+
+  <!-- 圖表庫 -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <!-- Markdown 渲染 -->
+  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.0/marked.min.js"></script>
+  <!-- 主程式（內含 MediaPipe，用 ES module 載入）-->
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

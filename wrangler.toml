@@ -1,0 +1,17 @@
+name = "fitplay-ai"
+main = "src/index.js"
+compatibility_date = "2025-01-01"
+
+# 前端靜態檔案（public/）會由 Cloudflare 直接派送；
+# 只有 /api/* 嘅請求先會行去下面個 Worker。
+[assets]
+directory = "./public"
+binding = "ASSETS"
+
+[vars]
+# 可改用 qwen-max（更準）或 qwen-turbo（更快更平）
+QWEN_MODEL = "qwen-plus"
+
+# 注意：QWEN_API_KEY 唔好寫喺呢度！
+# 正式部署用：  npx wrangler secret put QWEN_API_KEY
+# 本機開發用：  喺 .dev.vars 入面寫 QWEN_API_KEY=sk-xxxx
