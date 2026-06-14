@@ -249,15 +249,35 @@ function renderDots() {
   });
 }
 
+// 圓形倒數環：周長 = 2πr，r = 52
+const RING_C = 2 * Math.PI * 52;
+function setTimer(remaining, duration) {
+  $("game-timer").textContent = remaining;
+  const frac = Math.max(0, remaining / duration);
+  $("ring-fg").style.strokeDashoffset = (RING_C * (1 - frac)).toFixed(1);
+  $("timer-ring").classList.toggle("low", remaining <= 5 && remaining > 0);
+}
+
+// 大大個 3-2-1 倒數
+function flashBig(text) {
+  const bc = $("big-countdown");
+  bc.textContent = text;
+  bc.classList.remove("show");
+  void bc.offsetWidth; // 重觸發動畫
+  bc.classList.add("show");
+}
+
 function prepareChallenge() {
   const c = CHALLENGES[state.currentChallenge];
   state.mode = null;
   $("game-title").textContent = c.title;
   $("game-unit").textContent = c.unit;
   $("game-count").textContent = "0";
-  $("game-timer").textContent = c.duration + "s";
+  setTimer(c.duration, c.duration);
+  $("timer-ring").classList.remove("low");
+  $("big-countdown").classList.remove("show");
   $("game-instruction").textContent = c.instruction;
-  $("btn-start-challenge").textContent = `開始：${c.title}`;
+  $("btn-start-challenge").textContent = `開始：${c.title} ▶`;
   $("btn-start-challenge").disabled = false;
   renderDots();
 }
@@ -272,22 +292,26 @@ function runChallenge() {
   counter.balanceMax = 0;
 
   let remaining = c.duration;
-  $("game-timer").textContent = remaining + "s";
+  setTimer(remaining, c.duration);
+  $("game-instruction").textContent = "準備…";
 
-  // 3 秒倒數
+  // 大倒數 3 → 2 → 1 → 開始！
   let pre = 3;
-  $("game-instruction").textContent = `準備… ${pre}`;
+  flashBig(pre);
   const preTimer = setInterval(() => {
     pre--;
     if (pre > 0) {
-      $("game-instruction").textContent = `準備… ${pre}`;
+      flashBig(pre);
+    } else if (pre === 0) {
+      flashBig("開始!");
     } else {
       clearInterval(preTimer);
+      $("big-countdown").classList.remove("show");
       $("game-instruction").textContent = c.instruction;
       state.mode = c.key; // 開始計數
       const timer = setInterval(() => {
         remaining--;
-        $("game-timer").textContent = remaining + "s";
+        setTimer(remaining, c.duration);
         if (remaining <= 0) {
           clearInterval(timer);
           finishChallenge();
@@ -407,23 +431,26 @@ function drawRadar() {
       datasets: [{
         label: "你的分數",
         data,
-        backgroundColor: "rgba(54,224,164,.25)",
-        borderColor: "#36e0a4",
-        pointBackgroundColor: "#4f8cff",
-        borderWidth: 2,
+        backgroundColor: "rgba(151,117,250,.25)",
+        borderColor: "#9775fa",
+        pointBackgroundColor: "#ff6b6b",
+        pointBorderColor: "#fff",
+        pointRadius: 6,
+        pointHoverRadius: 8,
+        borderWidth: 3,
       }],
     },
     options: {
       scales: {
         r: {
           min: 0, max: 100,
-          ticks: { stepSize: 20, color: "#9aa3c7", backdropColor: "transparent" },
-          grid: { color: "rgba(255,255,255,.12)" },
-          angleLines: { color: "rgba(255,255,255,.12)" },
-          pointLabels: { color: "#eef1ff", font: { size: 13 } },
+          ticks: { stepSize: 20, color: "#6b6f9c", backdropColor: "transparent", font: { size: 11 } },
+          grid: { color: "rgba(43,45,82,.12)" },
+          angleLines: { color: "rgba(43,45,82,.12)" },
+          pointLabels: { color: "#2b2d52", font: { size: 15, weight: "700", family: "Noto Sans TC" } },
         },
       },
-      plugins: { legend: { labels: { color: "#eef1ff" } } },
+      plugins: { legend: { labels: { color: "#2b2d52", font: { size: 14, weight: "700" } } } },
     },
   });
   const s2 = state.scores;
